@@ -1,73 +1,74 @@
 #include "search_algos.h"
 
 /**
- * print_arrayAd - Prints an array between two boundaries
- * @array: pointer to the first element of the array to print
- * @min: left boundary
- * @max: right boundary
- *
- * Return: No Return
+ * print_array - Prints the contents of an array.
+ * @array: The source of the array to print.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
  */
-void print_arrayAd(int *array, int min, int max)
+void print_array(int *array, size_t l, size_t r)
 {
-	int i;
+	size_t i;
 
-	for (i = min; i < max; i++)
-		printf("%d, ", array[i]);
-
-	printf("%d\n", array[i]);
+	if (array)
+	{
+		printf("Searching in array: ");
+		for (i = l; i < l + (r - l + 1); i++)
+			printf("%d%s", *(array + i), i < l + (r - l) ? ", " : "\n");
+	}
 }
+
 /**
- * auxBinary - searches for a value in a sorted array of integers
- * using the Binary search algorithm
- * @array: pointer to the first element of the array to search in
- * @min: left boundary
- * @max: right bounday
- * @value: value to search for
+ * binary_search_index - Searches a value in a sorted array using \
+ * a binary search.
+ * @array: The array to search in.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
+ * @value: The value to look for.
  *
- * Return: Index where value is located or -1
+ * Return: The first index of the value in the array, otherwise -1.
  */
-int auxBinary(int *array, int min, int max, int value)
+int binary_search_index(int *array, size_t l, size_t r, int value)
 {
-	int mid;
+	size_t m;
 
-	if (min > max)
+	if (!array)
 		return (-1);
-
-	printf("Searching in array: ");
-	print_arrayAd(array, min, max);
-
-
-	if (min == max && array[max] == value)
-		return (max);
-
-	if (min == max && array[max] != value)
-		return (-1);
-
-	mid = min + (max - min) / 2;
-
-	if ((mid == min || value != array[mid - 1]) && array[mid] == value)
-		return (mid);
-
-	if (array[mid] >= value)
-		return (auxBinary(array, min, mid, value));
-	return (auxBinary(array, mid + 1, max, value));
-
+	print_array(array, l, r);
+	m = l + ((r - l) / 2);
+	if (l == r)
+		return (*(array + m) == value ? (int)m : -1);
+	if (value < *(array + m))
+	{
+		return (binary_search_index(array, l, m, value));
+	}
+	else if (value == *(array + m))
+	{
+		if ((m > 0) && (*(array + m - 1) == value))
+		{
+			return (binary_search_index(array, l, m, value));
+		}
+		return ((int)m);
+	}
+	else
+	{
+		return (binary_search_index(array, m + 1, r, value));
+	}
 }
+
 /**
- * advanced_binary - searches for a value in a sorted array of integers
- * using the Binary search algorithm (Returns First Ocurrence)
- * @array: pointer to the first element of the array to search in
- * @size: number of elements in array
- * @value: value to search for
+ * advanced_binary - Searches a value in a sorted array using a binary search.
+ * @array: The array to search in.
+ * @size: The length of the array.
+ * @value: The value to look for.
  *
- * Return: First index where value is located or -1
+ * Return: The first index of the value in the array, otherwise -1.
  */
 int advanced_binary(int *array, size_t size, int value)
 {
-
-	if (!array || size == 0)
+	if (!array || !size)
 		return (-1);
-
-	return (auxBinary(array, 0, size - 1, value));
+	else if ((size == 1) && (*array == value))
+		return (0);
+	return (binary_search_index(array, 0, size - 1, value));
 }

@@ -1,52 +1,60 @@
 #include "search_algos.h"
 
 /**
- * print_array - Prints an array between two boundaries
- * @array: pointer to the first element of the array to print
- * @min: left boundary
- * @max: right boundary
- *
- * Return: No Return
+ * print_array - Prints the contents of an array.
+ * @array: The source of the array to print.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
  */
-void print_array(int *array, int min, int max)
+void print_array(int *array, size_t l, size_t r)
 {
-	int i;
+	size_t i;
 
-	for (i = min; i < max; i++)
-		printf("%d, ", array[i]);
-
-	printf("%d\n", array[i]);
+	if (array)
+	{
+		printf("Searching in array: ");
+		for (i = l; i < l + (r - l + 1); i++)
+			printf("%d%s", *(array + i), i < l + (r - l) ? ", " : "\n");
+	}
 }
 
 /**
- * binary_search - searches for a value in a sorted array of integers using the
- * Binary search algorithm
- * @array: pointer to the first element of the array to search in
- * @size:  number of elements in array
- * @value: value to search for
+ * binary_search_index - Searches a value in a sorted array using \
+ * a binary search.
+ * @array: The array to search in.
+ * @l: The left index of the array.
+ * @r: The right index of the array.
+ * @value: The value to look for.
  *
- * Return: Index where value is located or -1
+ * Return: The first index of the value in the array, otherwise -1.
  */
-int binary_search(int *array, size_t size, int value)
+int binary_search_index(int *array, size_t l, size_t r, int value)
 {
-	int min, max, mid;
+	size_t m;
 
 	if (!array)
 		return (-1);
+	print_array(array, l, r);
+	m = l + ((r - l) / 2);
+	if (l == r)
+		return (*(array + m) == value ? (int)m : -1);
+	if (value < *(array + m))
+		return (binary_search_index(array, l, m - 1, value));
+	else if (value == *(array + m))
+		return ((int)m);
+	else
+		return (binary_search_index(array, m + 1, r, value));
+}
 
-	min = 0, max = size - 1;
-	while (min <= max)
-	{
-		printf("Searching in array: ");
-		print_array(array, min, max);
-		mid = (min + max) / 2;
-		if (array[mid] == value)
-			return (mid);
-		if (array[mid] < value)
-			min = mid + 1;
-		else
-			max = mid - 1;
-	}
-
-	return (-1);
+/**
+ * binary_search - Searches a value in a sorted array using a binary search.
+ * @array: The array to search in.
+ * @size: The length of the array.
+ * @value: The value to look for.
+ *
+ * Return: The index of the value in the array, otherwise -1.
+ */
+int binary_search(int *array, size_t size, int value)
+{
+	return (binary_search_index(array, 0, size - 1, value));
 }
